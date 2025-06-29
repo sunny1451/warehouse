@@ -807,7 +807,7 @@
             const productRef = doc(db, 'products', productId);
             await updateDoc(productRef, { qrCodeUrl });
           }
-          window.location.href = `file:///C:/Users/sunny/OneDrive/Desktop/my%20little/otp/index/upload/prodect.html?productId=${productId}&qrCodeUrl=${encodeURIComponent(qrCodeUrl)}&productCode=${encodeURIComponent(productCode)}`;
+          window.location.href = `https://sunny1451.github.io/warehouse/prodect.html?productId=${productId}&qrCodeUrl=${encodeURIComponent(qrCodeUrl)}&productCode=${encodeURIComponent(productCode)}`;
         } catch (error) {
           toast("Error generating QR code: " + error.message);
           console.error("Print QR error:", error);
@@ -818,7 +818,7 @@
       window.dockSideDispatcher = () => {
         toast("Dispatch Initiated! 🚚", false);
         setTimeout(() => {
-          window.location.href = 'file:///C:/Users/sunny/OneDrive/Desktop/my%20little/otp/dockstates/dockstates.html';
+          window.location.href = 'https://sunny1451.github.io/warehouse/dockstates.html';
         }, 1000);
       };
 
@@ -871,7 +871,7 @@
     }
 
     document.getElementById("addProductCard").addEventListener("click", function() {
-      window.location.href = "file:///C:/Users/sunny/OneDrive/Desktop/my%20little/otp/index/upload/prodect.html";
+      window.location.href = "https://sunny1451.github.io/warehouse/";
     });
   </script>
 </body>
