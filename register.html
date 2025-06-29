@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Worker ID</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ffe6e6;
+            font-family: 'Poppins', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            height: 600px;
+            position: relative;
+        }
+        .character {
+            width: 400px;
+            height: 400px;
+            position: absolute;
+            left: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 0;
+        }
+        .login-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+            position: absolute;
+            right: 50px;
+            z-index: 1;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .login-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+        }
+        .login-container .logo {
+            color: #f28c38;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .login-container h2 {
+            margin: 0 0 20px;
+            font-size: 2em;
+            color: #333;
+            font-weight: 700;
+            text-transform: uppercase;
+            text-align: left;
+        }
+        .login-container label {
+            text-align: left;
+            display: block;
+            font-size: 1em;
+            color: #555;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        .login-container input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            box-sizing: border-box;
+            background: #fff;
+            outline: none;
+            font-family: 'Poppins', sans-serif;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .login-container input:focus {
+            border-color: #f28c38;
+            box-shadow: 0 0 0 3px rgba(242, 140, 56, 0.2);
+        }
+        .login-container .forgot-password {
+            text-align: right;
+            color: #f28c38;
+            text-decoration: none;
+            font-size: 0.85em;
+            display: block;
+            margin-top: -10px;
+            margin-bottom: 15px;
+        }
+        .login-container .btn-gradient {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(90deg, #f28c38, #f5a623);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .login-container .btn-gradient:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(242, 140, 56, 0.4);
+        }
+        .login-container .social-login {
+            color: #666;
+            font-size: 0.9em;
+            margin: 15px 0;
+        }
+        .login-container .social-btns {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .login-container .social-btn {
+            width: 60px;
+            height: 40px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-size: 24px;
+            background-repeat: no-repeat;
+            background-position: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .login-container .social-btn:hover {
+            transform: scale(1.1);
+        }
+        .login-container .register {
+            color: #f28c38;
+            text-decoration: none;
+            font-size: 0.85em;
+        }
+        .login-container .error, .login-container .success {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: translateY(10px);
+            opacity: 0;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .login-container .error.show, .login-container .success.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .login-container .text-red-300 { color: rgb(252, 165, 165); }
+        .login-container .text-green-300 { color: rgb(134, 239, 172); }
+        .coin {
+            position: absolute;
+            background-color: #d4ed7a;
+            border-radius: 50%;
+            animation: fall 4s infinite;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-100vh); }
+            100% { transform: translateY(100vh); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://i.ibb.co/ZpqCDz3b/89e31fb982e6d87f239196db2b3e9ccc-copy-1.png" alt="Character" class="character">
+        <div class="login-container">
+            <div class="logo">Your logo</div>
+            <h2>Create Your Worker ID</h2>
+            <div class="space-y-4">
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Enter your email"
+                    class="w-full p-3 bg-white/10 text-white placeholder-gray-300 rounded-lg border border-gray-200/20 focus:ring transition"
+                    required
+                    aria-label="Email"
+                >
+                <input
+                    type="tel"
+                    id="phone"
+                    placeholder="Enter your phone number"
+                    class="w-full p-3 bg-white/10 text-white placeholder-gray-300 rounded-lg border border-gray-200/20 focus:ring transition"
+                    required
+                    aria-label="Phone Number"
+                >
+                <input
+                    type="text"
+                    id="workerId"
+                    placeholder="Create Worker ID"
+                    class="w-full p-3 bg-white/10 text-white placeholder-gray-300 rounded-lg border border-gray-200/20 focus:ring transition"
+                    required
+                    aria-label="Worker ID"
+                >
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Create Password"
+                    class="w-full p-3 bg-white/10 text-white placeholder-gray-300 rounded-lg border border-gray-200/20 focus:ring transition"
+                    required
+                    aria-label="Password"
+                >
+                <button
+                    onclick="window.register()"
+                    class="btn-gradient"
+                    aria-label="Register"
+                >
+                    Register
+                </button>
+                <p id="error" class="error text-red-300 text-center" role="alert"></p>
+                <p id="success" class="success text-green-300 text-center" role="alert"></p>
+                <a href="file:///C:/Users/sunny/OneDrive/Desktop/my%20little/otp/login.html" class="text-cyan-200 hover:text-cyan-100 transition block text-center" aria-label="Back to Login">
+                    Back to Login
+                </a>
+            </div>
+        </div>
+    </div>
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
+        import { getAuth, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
+        import { getFirestore, collection, query, where, getDocs, doc, setDoc } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA2-be7gC0tm7umzzpGy7WVHbg5itjYT-0",
+            authDomain: "intel-2947f.firebaseapp.com",
+            projectId: "intel-2947f",
+            storageBucket: "intel-2947f.firebasestorage.app",
+            messagingSenderId: "1039419345672",
+            appId: "1:1039419345672:web:6606abaf3e53f35b2c3abd",
+            measurementId: "G-4F234H9883"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.register = async function() {
+            const emailInput = document.getElementById('email');
+            const phoneInput = document.getElementById('phone');
+            const workerIdInput = document.getElementById('workerId');
+            const passwordInput = document.getElementById('password');
+            const errorElement = document.getElementById('error');
+            const successElement = document.getElementById('success');
+
+            if (!emailInput || !phoneInput || !workerIdInput || !passwordInput || !errorElement || !successElement) {
+                console.error('One or more DOM elements not found.');
+                return;
+            }
+
+            const email = emailInput.value.trim();
+            const phone = phoneInput.value.trim();
+            const workerId = workerIdInput.value.trim();
+            const password = passwordInput.value;
+
+            errorElement.classList.remove('show');
+            errorElement.style.opacity = '0';
+            successElement.classList.remove('show');
+            successElement.style.opacity = '0';
+
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const phonePattern = /^\+?\d{10,15}$/;
+            const workerIdPattern = /^[a-zA-Z0-9_-]+$/;
+
+            if (!emailPattern.test(email)) {
+                errorElement.textContent = 'Please enter a valid email address.';
+                errorElement.classList.add('show');
+                errorElement.style.opacity = '1';
+                return;
+            }
+            if (!phonePattern.test(phone)) {
+                errorElement.textContent = 'Please enter a valid phone number (10-15 digits).';
+                errorElement.classList.add('show');
+                errorElement.style.opacity = '1';
+                return;
+            }
+            if (!workerId) {
+                errorElement.textContent = 'Worker ID cannot be empty.';
+                errorElement.classList.add('show');
+                errorElement.style.opacity = '1';
+                return;
+            }
+            if (!workerIdPattern.test(workerId)) {
+                errorElement.textContent = 'Worker ID can only contain letters, numbers, underscores, and hyphens.';
+                errorElement.classList.add('show');
+                errorElement.style.opacity = '1';
+                return;
+            }
+            if (password.length < 6) {
+                errorElement.textContent = 'Password must be at least 6 characters long.';
+                errorElement.classList.add('show');
+                errorElement.style.opacity = '1';
+                return;
+            }
+
+            try {
+                const q = query(collection(db, 'workers'), where('workerId', '==', workerId));
+                const querySnapshot = await getDocs(q);
+                if (!querySnapshot.empty) {
+                    errorElement.textContent = 'Worker ID already exists. Please choose a different ID.';
+                    errorElement.classList.add('show');
+                    errorElement.style.opacity = '1';
+                    return;
+                }
+
+                const authEmail = `${workerId}@warehouse12.com`;
+                const userCredential = await createUserWithEmailAndPassword(auth, authEmail, password);
+                const user = userCredential.user;
+
+                await setDoc(doc(db, 'workers', user.uid), {
+                    workerId: workerId,
+                    email: email,
+                    phone: phone,
+                    createdAt: new Date()
+                });
+
+                successElement.textContent = `Registration successful! Your Worker ID is: ${workerId}. Redirecting to login...`;
+                successElement.classList.add('show');
+                successElement.style.opacity = '1';
+
+                emailInput.value = '';
+                phoneInput.value = '';
+                workerIdInput.value = '';
+                passwordInput.value = '';
+
+                setTimeout(() => {
+                    window.location.href = 'file:///C:/Users/sunny/OneDrive/Desktop/my%20little/otp/login.html';
+                }, 2000);
+            } catch (error) {
+                let errorMessage = 'Registration failed. Please try again.';
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = 'Worker ID already exists. Please choose a different ID.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Invalid Worker ID format.';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = 'Password is too weak.';
+                } else if (error.code === 'permission-denied') {
+                    errorMessage = 'Permission denied. Please contact support.';
+                } else {
+                    console.error('Error:', error.message);
+                }
+                errorElement.textContent = errorMessage;
+                errorElement.classList.add('show');
+                errorElement.style.opacity = '1';
+            }
+        };
+    </script>
+    <script>
+        function createCoins() {
+            for (let i = 0; i < 10; i++) {
+                const coin = document.createElement('div');
+                coin.className = 'coin';
+                coin.style.left = Math.random() * 100 + '%';
+                coin.style.width = Math.random() * 20 + 10 + 'px';
+                coin.style.height = coin.style.width;
+                coin.style.animationDelay = Math.random() * 4 + 's';
+                document.body.appendChild(coin);
+            }
+        }
+        createCoins();
+    </script>
+</body>
+</html>

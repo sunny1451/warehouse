@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dock Actions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <!-- Omnidimension Web Widget for AI Agent -->
+  <script id="omnidimension-web-widget" async src="https://backend.omnidim.io/web_widget.js?secret_key=5ed65996ac85b8d7c06cef69520a38e8"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #ffe6e6, #fff0f0), radial-gradient(circle at 20% 20%, rgba(255, 230, 230, 0.2), transparent 50%);
+      font-family: 'Poppins', sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      max-width: 1200px;
+      height: 600px;
+      position: relative;
+      text-align: center;
+      padding: 20px;
+    }
+    h2 {
+      margin: 0 0 20px;
+      font-size: 3em;
+      color: #333;
+      font-weight: 700;
+      text-transform: uppercase;
+      position: relative;
+      z-index: 1;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .subtitle {
+      font-size: 1.2em;
+      color: #666;
+      margin-bottom: 40px;
+      font-weight: 500;
+      opacity: 0.9;
+    }
+    .button-group {
+      display: flex;
+      gap: 50px;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 30px;
+      z-index: 1;
+    }
+    .action-button {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: linear-gradient(90deg, #f28c38, #f5a623, #ffbf00);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-align: center;
+      padding: 15px;
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+      position: relative;
+      overflow: hidden;
+    }
+    .action-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+    }
+    .action-button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s ease, height 0.6s ease;
+      z-index: 0;
+    }
+    .action-button:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+    .action-button img {
+      width: 70px;
+      height: 70px;
+      margin-bottom: 15px;
+      filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.2));
+      z-index: 1;
+    }
+    .action-button span {
+      font-size: 1.1em;
+      white-space: nowrap;
+      z-index: 1;
+    }
+    .check-dock {
+      background: linear-gradient(90deg, #10b981, #34d399, #6ee7b7);
+    }
+    .check-dock img {
+      animation: pulse 2s infinite;
+    }
+    .warehouse {
+      background: linear-gradient(90deg, #4facfe, #00f2fe, #a3e4d7);
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    .coin {
+      position: absolute;
+      background-color: #d4ed7a;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: fallAndRotate 4s infinite;
+    }
+    @keyframes fallAndRotate {
+      0% { transform: translateY(-100vh) rotate(0deg); }
+      100% { transform: translateY(100vh) rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Dock Operations</h2>
+    <div class="subtitle">Manage Your Dock Activities Efficiently</div>
+    <div class="button-group">
+      <div class="action-button check-dock" onclick="checkDockStatus()">
+        <img src="https://cdn3.iconfinder.com/data/icons/status/100/clipboard_check_1-512.png" alt="Check Dock Status" />
+        <span>Check Dock Status</span>
+      </div>
+      <div class="action-button warehouse" onclick="goToWarehouse()">
+        <img src="https://cdn-icons-png.flaticon.com/512/2250/2250406.png" alt="Warehouse" />
+        <span>Warehouse</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Dynamic coin animation
+    function createCoin() {
+      const coin = document.createElement('div');
+      coin.className = 'coin';
+      coin.style.left = Math.random() * 100 + 'vw';
+      coin.style.animationDuration = Math.random() * 2 + 3 + 's';
+      coin.style.backgroundColor = ['#d4ed7a', '#a3e4d7', '#fad2e1'][Math.floor(Math.random() * 3)];
+      document.body.appendChild(coin);
+      setTimeout(() => coin.remove(), 4000);
+    }
+    setInterval(createCoin, 400);
+
+    // Toast notification function
+    const toast = (msg, isError = false) => 
+      Toastify({
+        text: msg,
+        duration: 3000,
+        close: true,
+        gravity: "top",
+        position: "center",
+        style: { background: isError ? "#ef4444" : "#22c55e" }
+      }).showToast();
+
+    // Check Dock Status
+    function checkDockStatus() {
+      toast("Dock 2: Free ✅", false);
+      setTimeout(() => {
+        window.location.href = 'file:///C:/Users/sunny/OneDrive/Desktop/my%20little/otp/dockstates/dockstates.html';
+      }, 1000);
+    }
+
+    // Go to Warehouse
+    function goToWarehouse() {
+      toast("Navigating to Warehouse... 📦", false);
+      setTimeout(() => {
+        window.location.href = 'file:///C:/Users/sunny/OneDrive/Desktop/my%20little/otp/index/index.html';
+      }, 1000);
+    }
+  </script>
+</body>
+</html>

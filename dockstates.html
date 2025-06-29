@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dock Status - Intel Corp</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #e0eafc, #cfdef3);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: linear-gradient(90deg, #4facfe, #00f2fe);
+      padding: 20px 40px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+    header h1 {
+      color: white;
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+    /* Dock Status Section */
+    .dock-status-section {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      animation: fadeIn 0.5s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .dock-status-section h2 {
+      font-size: 2rem;
+      color: #1e293b;
+      margin-bottom: 20px;
+    }
+    .dock-status-section input {
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 25px;
+      width: 100%;
+      max-width: 300px;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+    .dock-status-section button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 500;
+      background: #3b82f6;
+      color: white;
+      transition: background 0.3s ease;
+    }
+    .dock-status-section button:hover {
+      background: #2563eb;
+    }
+    .dock-status-section .status-message {
+      margin: 15px 0;
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+    .dock-status-section .status-message.available {
+      color: #22c55e;
+    }
+    .dock-status-section .status-message.occupied {
+      color: #ef4444;
+    }
+    .dock-status-section .dock-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .dock-status-section .dock-item {
+      background: #f1f5f9;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .dock-status-section .dock-item.free {
+      border: 2px solid #22c55e;
+    }
+    .dock-status-section .dock-item.occupied {
+      border: 2px solid #ef4444;
+    }
+    .dock-status-section .dock-item p {
+      color: #334155;
+      font-size: 1rem;
+    }
+    .dock-status-section .okay-btn {
+      margin-top: 20px;
+      background: #64748b;
+    }
+    .dock-status-section .okay-btn:hover {
+      background: #475569;
+    }
+    /* Contact Section */
+    .contact-section {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 20px;
+      background: linear-gradient(135deg, #ffffff, #f1f5f9);
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    .contact-section h2 {
+      font-size: 1.8rem;
+      color: #1e293b;
+      margin-bottom: 20px;
+    }
+    .contact-section p {
+      color: #334155;
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+    }
+    .contact-section .image-container {
+      margin: 20px 0;
+      padding: 20px;
+      background: #e2e8f0;
+      border-radius: 10px;
+      height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .contact-section .image-container img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+    footer {
+      background: linear-gradient(90deg, #1e293b, #334155);
+      padding: 20px;
+      text-align: center;
+      color: white;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+      margin-top: auto;
+    }
+    footer p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <h1>Dock Status - Intel Corp</h1>
+  </header>
+
+  <!-- Dock Status Section -->
+  <section class="dock-status-section">
+    <h2>Check Dock Status</h2>
+    <input id="worker-id-input" type="text" placeholder="Enter Worker ID" />
+    <button onclick="window.checkDockStatus()">Check Dock Status</button>
+    <div id="dock-status-message" class="status-message"></div>
+    <div id="dock-list" class="dock-list"></div>
+    <button id="okay-btn" class="okay-btn" onclick="window.clearDockStatus()" style="display: none;">Okay</button>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="contact-section">
+    <h2>Our Docks</h2>
+    <p>Our facility features five docks across three gates, designed for efficient logistics and dispatch operations.</p>
+    <div class="image-container">
+      <img src="https://i.ibb.co/JFsthc8m/maxresdefault.jpg" alt="Dock Facility" />
+    </div>
+    <p>Contact: sunnykothakonda4@gmail.com | Phone: 7093297758 | Address: Hyderabad, Hayathnagar</p>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>My Vibe-a-thon © 2025</p>
+    <p>Contact: sunnykothakonda4@gmail.com | Phone: 7093297758 | Address: Hyderabad, Hayathnagar</p>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js';
+    import { getFirestore, collection, getDocs, doc, updateDoc, setDoc } from 'https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js';
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyA2-be7gC0tm7umzzpGy7WVHbg5itjYT-0",
+      authDomain: "intel-2947f.firebaseapp.com",
+      projectId: "intel-2947f",
+      storageBucket: "intel-2947f.firebasestorage.app",
+      messagingSenderId: "1039419345672",
+      appId: "1:1039419345672:web:6606abaf3e53f35b2c3abd",
+      measurementId: "G-4F234H9883"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Initialize application
+    function initializeAppLogic() {
+      // DOM elements with checks
+      const workerIdInput = document.getElementById('worker-id-input');
+      const dockStatusMessage = document.getElementById('dock-status-message');
+      const dockList = document.getElementById('dock-list');
+      const okayBtn = document.getElementById('okay-btn');
+
+      if (!workerIdInput || !dockStatusMessage || !dockList || !okayBtn) {
+        console.error('One or more DOM elements not found.');
+        Toastify({
+          text: 'Initialization failed. Please refresh the page.',
+          duration: 5000,
+          close: true,
+          gravity: "top",
+          position: "center",
+          style: { background: "#ef4444" }
+        }).showToast();
+        return false;
+      }
+
+      // Toast notification function
+      const toast = (msg, isError = true) => 
+        Toastify({
+          text: msg,
+          duration: 3000,
+          close: true,
+          gravity: "top",
+          position: "center",
+          style: { background: isError ? "#ef4444" : "#22c55e" }
+        }).showToast();
+
+      // Check authentication state
+      let isRedirecting = false;
+      onAuthStateChanged(auth, (user) => {
+        if (!user && !isRedirecting) {
+          isRedirecting = true;
+          window.location.href = 'index.html';
+        }
+      });
+
+      // Initialize docks in Firebase if not already present
+      async function initializeDocks() {
+        const docksRef = collection(db, 'docks');
+        const dockSnapshot = await getDocs(docksRef);
+        if (dockSnapshot.empty) {
+          const docks = [
+            { id: 'Dock1', gate: 1, isAvailable: true, workerId: null },
+            { id: 'Dock2', gate: 1, isAvailable: true, workerId: null },
+            { id: 'Dock3', gate: 2, isAvailable: true, workerId: null },
+            { id: 'Dock4', gate: 2, isAvailable: true, workerId: null },
+            { id: 'Dock5', gate: 3, isAvailable: true, workerId: null }
+          ];
+          for (const dock of docks) {
+            await setDoc(doc(db, 'docks', dock.id), {
+              gate: dock.gate,
+              isAvailable: dock.isAvailable,
+              workerId: dock.workerId
+            });
+          }
+        }
+      }
+
+      // Check dock status
+      window.checkDockStatus = async () => {
+        const workerId = workerIdInput.value.trim();
+        if (!workerId) {
+          toast("Please enter a valid Worker ID.");
+          return;
+        }
+        try {
+          const docksRef = collection(db, 'docks');
+          const snapshot = await getDocs(docksRef);
+          let docks = [];
+          snapshot.forEach(doc => {
+            docks.push({ id: doc.id, ...doc.data() });
+          });
+
+          // Check Dock 2 specifically
+          const dock2 = docks.find(dock => dock.id === 'Dock2');
+          if (dock2 && dock2.isAvailable) {
+            dockStatusMessage.textContent = 'Dock 2 is currently available. You can proceed.';
+            dockStatusMessage.className = 'status-message available';
+            // Book Dock 2
+            await updateDoc(doc(db, 'docks', 'Dock2'), {
+              isAvailable: false,
+              workerId: workerId
+            });
+            docks = docks.map(dock => 
+              dock.id === 'Dock2' ? { ...dock, isAvailable: false, workerId } : dock
+            );
+          } else {
+            const allOccupied = docks.every(dock => !dock.isAvailable);
+            if (allOccupied) {
+              dockStatusMessage.textContent = '🔴 All docks are currently occupied. Please wait 5 minutes.';
+              dockStatusMessage.className = 'status-message occupied';
+            } else {
+              // Book first available dock
+              const availableDock = docks.find(dock => dock.isAvailable);
+              if (availableDock) {
+                await updateDoc(doc(db, 'docks', availableDock.id), {
+                  isAvailable: false,
+                  workerId: workerId
+                });
+                docks = docks.map(dock => 
+                  dock.id === availableDock.id ? { ...dock, isAvailable: false, workerId } : dock
+                );
+                dockStatusMessage.textContent = `${availableDock.id} is currently available. You can proceed.`;
+                dockStatusMessage.className = 'status-message available';
+              }
+            }
+          }
+
+          // Display dock statuses
+          dockList.innerHTML = '';
+          docks.forEach(dock => {
+            const dockItem = document.createElement('div');
+            dockItem.className = `dock-item ${dock.isAvailable ? 'free' : 'occupied'}`;
+            dockItem.innerHTML = `
+              <p><strong>${dock.id}</strong></p>
+              <p>Gate: ${dock.gate}</p>
+              <p>Status: ${dock.isAvailable ? 'Free' : 'Occupied'}</p>
+              <p>Worker: ${dock.workerId || 'None'}</p>
+            `;
+            dockList.appendChild(dockItem);
+          });
+
+          okayBtn.style.display = 'block';
+          toast(`Dock status checked for Worker ID: ${workerId}`, false);
+        } catch (error) {
+          toast("Error checking dock status: " + error.message);
+          console.error("Dock status error:", error);
+        }
+      };
+
+      // Clear dock status display
+      window.clearDockStatus = () => {
+        dockStatusMessage.textContent = '';
+        dockList.innerHTML = '';
+        workerIdInput.value = '';
+        okayBtn.style.display = 'none';
+      };
+
+      // Initialize docks on page load
+      initializeDocks().catch(error => {
+        toast("Error initializing docks: " + error.message);
+        console.error("Dock initialization error:", error);
+      });
+
+      return true;
+    }
+
+    // Run initialization
+    if (!initializeAppLogic()) {
+      console.error('Initialization failed. Check DOM elements.');
+      Toastify({
+        text: 'Initialization failed. Please refresh the page.',
+        duration: 5000,
+        close: true,
+        gravity: "top",
+        position: "center",
+        style: { background: "#ef4444" }
+      }).showToast();
+    }
+  </script>
+</body>
+</html>

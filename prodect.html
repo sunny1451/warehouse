@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Product - Inventory System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f7fafc;
+            color: #1a202c;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+            padding: 10px 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .header h2 {
+            color: white;
+            font-size: 1.4em;
+            font-weight: 600;
+        }
+        .back-btn {
+            padding: 6px 12px;
+            background: #ffffff;
+            color: #4a5568;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.85em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+        .back-btn:hover {
+            background: #edf2f7;
+            transform: translateY(-1px);
+        }
+        .container {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            width: 100%;
+            max-width: 550px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 2em;
+            font-weight: 700;
+        }
+        .progress-circle {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+        .progress-circle svg {
+            transform: rotate(-90deg);
+        }
+        .progress-circle circle {
+            fill: none;
+            stroke-width: 6;
+        }
+        .progress-circle .bg {
+            stroke: #e2e8f0;
+        }
+        .progress-circle .fg {
+            stroke: #4facfe;
+            stroke-dasharray: 283;
+            stroke-dashoffset: 283;
+            transition: stroke-dashoffset 0.3s ease;
+        }
+        .progress-circle span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        label {
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+        label svg {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            fill: #4facfe;
+        }
+        input {
+            width: 100%;
+            padding: 10px 10px 10px 0;
+            border: none;
+            border-bottom: 2px solid #e2e8f0;
+            font-size: 1em;
+            background: transparent;
+            transition: border-color 0.3s ease;
+        }
+        input:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+        input[type="file"] {
+            padding: 10px 0;
+        }
+        .image-preview, .qr-preview {
+            margin-top: 15px;
+            text-align: center;
+        }
+        .image-preview img, .qr-preview img {
+            max-width: 180px;
+            max-height: 180px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .image-preview img:hover, .qr-preview img:hover {
+            transform: scale(1.03);
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .generate-btn {
+            background: linear-gradient(90deg, #ed8936, #f6ad55);
+            color: white;
+        }
+        .generate-btn:hover {
+            background: linear-gradient(90deg, #dd6b20, #e69500);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 10px rgba(221, 107, 32, 0.3);
+        }
+        .save-btn {
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            color: white;
+        }
+        .save-btn:hover {
+            background: linear-gradient(90deg, #38a169, #2f855a);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 10px rgba(56, 161, 105, 0.3);
+        }
+        .download-btn {
+            background: linear-gradient(90deg, #4299e1, #3182ce);
+            color: white;
+            margin-top: 10px;
+            padding: 8px 16px;
+            font-size: 0.9em;
+        }
+        .download-btn:hover {
+            background: linear-gradient(90deg, #3182ce, #2b6cb0);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 10px rgba(49, 130, 206, 0.3);
+        }
+        button:disabled {
+            background: #e2e8f0;
+            color: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .error, .success {
+            font-size: 0.9em;
+            margin-top: 8px;
+            padding: 8px;
+            border-radius: 6px;
+            display: none;
+            text-align: center;
+        }
+        .error {
+            background: #fef2f2;
+            color: #e53e3e;
+        }
+        .success {
+            background: #f0fff4;
+            color: #48bb78;
+        }
+        .tooltip {
+            position: absolute;
+            top: -25px;
+            left: 0;
+            background: #4a5568;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        .form-group:hover .tooltip {
+            opacity: 1;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            .header h2 {
+                font-size: 1.2em;
+            }
+            .back-btn {
+                padding: 5px 10px;
+                font-size: 0.8em;
+            }
+            input, button {
+                font-size: 0.9em;
+            }
+            .progress-circle {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h2>Add New Product</h2>
+    </header>
+    <div class="container">
+        <h1>Add Product</h1>
+        <div class="progress-circle">
+            <svg width="60" height="60">
+                <circle class="bg" cx="30" cy="30" r="27" />
+                <circle class="fg" id="progress" cx="30" cy="30" r="27" />
+            </svg>
+            <span id="progress-text">0%</span>
+        </div>
+        <form id="productForm">
+            <div class="form-group">
+                <label><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-7.35 16.83l1.41-1.41A8 8 0 1 1 12 20a8 8 0 0 1-4.24-1.26l-1.41 1.41A10 10 0 1 0 12 2z" fill="currentColor"/></svg>Product ID</label>
+                <input type="text" id="productId" required placeholder="Enter unique product ID">
+                <div class="tooltip">Enter a unique ID for the product</div>
+                <div class="error" id="productIdError"></div>
+            </div>
+            <div class="form-group">
+                <label><svg viewBox="0 0 24 24"><path d="M3 4h18v2H3V4zm0 5h18v2H3V9zm0 5h18v2H3v-2z" fill="currentColor"/></svg>Product Name</label>
+                <input type="text" id="productName" required placeholder="Enter product name">
+                <div class="tooltip">Enter the product name</div>
+            </div>
+            <div class="form-group">
+                <label><svg viewBox="0 0 24 24"><path d="M6 2v6h.01L6 8.01 10 12l-4 4 .01.01H6V22h12v-5.99h-.01L18 16l-4-4 4-3.99-.01-.01H18V2H6z" fill="currentColor"/></svg>Initial Stock</label>
+                <input type="number" id="stock" min="0" required placeholder="Enter stock quantity">
+                <div class="tooltip">Enter initial stock (0 or more)</div>
+            </div>
+            <div class="form-group">
+                <label><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z" fill="currentColor"/></svg>Location</label>
+                <input type="text" id="location" required placeholder="Enter storage location">
+                <div class="tooltip">Enter storage location (e.g., Warehouse A)</div>
+            </div>
+            <div class="form-group">
+                <label><svg viewBox="0 0 24 24"><path d="M4 4h16v12H5.17L4 17.17V4zm2 2v8h12V6H6zm2 2h8v2H8V8zm0 3h8v2H8v-2z" fill="currentColor"/></svg>Product Image</label>
+                <input type="file" id="image" accept="image/*" required>
+                <div class="tooltip">Upload a product image (JPEG/PNG)</div>
+                <div class="image-preview" id="imagePreview"></div>
+            </div>
+            <div class="form-group">
+                <button type="button" class="generate-btn" id="generateQR">Generate QR Code</button>
+                <div class="qr-preview" id="qrPreview"></div>
+            </div>
+            <button type="submit" class="save-btn" id="saveButton" disabled>Upload in House</button>
+            <div class="error" id="errorMessage"></div>
+            <div class="success" id="successMessage"></div>
+        </form>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA2-be7gC0tm7umzzpGy7WVHbg5itjYT-0",
+            authDomain: "intel-2947f.firebaseapp.com",
+            projectId: "intel-2947f",
+            storageBucket: "intel-2947f.firebasestorage.app",
+            messagingSenderId: "1039419345672",
+            appId: "1:1039419345672:web:6606abaf3e53f35b2c3abd",
+            measurementId: "G-4F234H9883"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // ImageKit Configuration
+        const IMAGEKIT_PRIVATE_KEY = 'private_keidOpgelVBXCjFeq1v6cC3Zh8M=';
+        const IMAGEKIT_PUBLIC_KEY = 'public_kVKXQSuwDPXHQEV2SP1zrkVDgAM=';
+        const IMAGEKIT_URL_ENDPOINT = 'https://ik.imagekit.io/RentaLRoomS/';
+
+        // DOM elements
+        const productForm = document.getElementById('productForm');
+        const saveButton = document.getElementById('saveButton');
+        const productIdInput = document.getElementById('productId');
+        const productIdError = document.getElementById('productIdError');
+        const productNameInput = document.getElementById('productName');
+        const stockInput = document.getElementById('stock');
+        const locationInput = document.getElementById('location');
+        const imageInput = document.getElementById('image');
+        const generateQRButton = document.getElementById('generateQR');
+        const imagePreview = document.getElementById('imagePreview');
+        const qrPreview = document.getElementById('qrPreview');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const progressCircle = document.getElementById('progress');
+        const progressText = document.getElementById('progress-text');
+        let imageUrl = '';
+        let qrCodeUrl = '';
+
+        // Toast notification
+        const toast = (msg, isError = true) => 
+            Toastify({
+                text: msg,
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "center",
+                style: { background: isError ? "#ef4444" : "#22c55e" }
+            }).showToast();
+
+        // Check authentication state
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = 'file:///C:/Users/sunny/OneDrive/Desktop/my%20little/otp/login.html';
+            }
+        });
+
+        // Upload to ImageKit
+        async function uploadToImageKit(file, fileName) {
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('fileName', fileName);
+                formData.append('publicKey', IMAGEKIT_PUBLIC_KEY);
+                formData.append('folder', '/rental_rooms');
+                const response = await fetch('https://upload.imagekit.io/api/v1/files/upload', {
+                    method: 'POST',
+                    headers: { Authorization: `Basic ${btoa(IMAGEKIT_PRIVATE_KEY + ':')}` },
+                    body: formData
+                });
+                if (!response.ok) throw new Error(`ImageKit upload failed: ${await response.text()}`);
+                const data = await response.json();
+                return data.url;
+            } catch (error) {
+                console.error('ImageKit upload error:', error);
+                throw error;
+            }
+        }
+
+        // Validate Product ID
+        async function validateProductId(productId) {
+            if (!productId) {
+                showError(productIdError, 'Product ID is required.');
+                return false;
+            }
+            try {
+                const productRef = doc(db, 'products', productId);
+                const productSnap = await getDoc(productRef);
+                if (productSnap.exists()) {
+                    showError(productIdError, 'Product ID already exists.');
+                    return false;
+                }
+                productIdError.style.display = 'none';
+                return true;
+            } catch (error) {
+                showError(productIdError, 'Error validating Product ID: ' + error.message);
+                return false;
+            }
+        }
+
+        // Handle Image Upload
+        async function updateProductImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const productName = productNameInput.value.trim() || 'anonymous';
+            try {
+                const fileName = `product_${productName}_${Date.now()}_${file.name}`;
+                imageUrl = await uploadToImageKit(file, fileName);
+                imagePreview.innerHTML = '';
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.alt = 'Product Image';
+                img.onerror = () => {
+                    console.error('Failed to load product image');
+                    imagePreview.innerHTML = '';
+                    imageUrl = '';
+                    updateProgress();
+                };
+                imagePreview.appendChild(img);
+                updateProgress();
+            } catch (error) {
+                toast('Failed to upload product image. Please try again.');
+                imageInput.value = '';
+            }
+        }
+
+        imageInput.addEventListener('change', updateProductImage);
+
+        // Generate QR Code
+        generateQRButton.addEventListener('click', async () => {
+            const productId = productIdInput.value.trim();
+            if (!productId) {
+                toast('Please enter a Product ID first.');
+                return;
+            }
+            const isValid = await validateProductId(productId);
+            if (!isValid) return;
+            try {
+                const canvas = document.createElement('canvas');
+                await QRCode.toCanvas(canvas, productId, { width: 150, margin: 1 });
+                qrCodeUrl = canvas.toDataURL('image/png');
+                qrPreview.innerHTML = `
+                    <img src="${qrCodeUrl}" alt="QR Code">
+                    <button class="download-btn" onclick="window.downloadQR('${qrCodeUrl}', '${productId}')">Download QR</button>
+                `;
+                updateProgress();
+            } catch (error) {
+                toast('Failed to generate QR code.');
+                console.error(error);
+            }
+        });
+
+        // Download QR Code
+        window.downloadQR = (url, productId) => {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `QR_${productId}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+        // Update Progress Circle
+        function updateProgress() {
+            const fields = [productIdInput, productNameInput, stockInput, locationInput];
+            const filledFields = fields.filter(field => field.value.trim()).length;
+            const hasImage = imageUrl ? 1 : 0;
+            const hasQR = qrCodeUrl ? 1 : 0;
+            const progress = ((filledFields + hasImage + hasQR) / 6) * 100;
+            const offset = 283 - (progress / 100) * 283;
+            progressCircle.style.strokeDashoffset = offset;
+            progressText.textContent = `${Math.round(progress)}%`;
+            checkFormCompletion();
+        }
+
+        // Check form completion
+        function checkFormCompletion() {
+            const isFormValid = productForm.checkValidity() && imageUrl && qrCodeUrl;
+            saveButton.disabled = !isFormValid;
+        }
+
+        // Real-time input validation
+        [productIdInput, productNameInput, stockInput, locationInput].forEach(input => {
+            input.addEventListener('input', () => {
+                if (input.id === 'productId') {
+                    validateProductId(input.value.trim());
+                }
+                updateProgress();
+            });
+        });
+
+        // Handle Form Submission
+        productForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const productId = productIdInput.value.trim();
+            const productName = productNameInput.value.trim();
+            const stock = parseInt(stockInput.value);
+            const location = locationInput.value.trim();
+
+            const isValid = await validateProductId(productId);
+            if (!isValid) return;
+
+            try {
+                await setDoc(doc(db, 'products', productId), {
+                    productId: productId,
+                    name: productName,
+                    stock: stock,
+                    location: location,
+                    imageUrl: imageUrl,
+                    qrCodeUrl: qrCodeUrl,
+                    lastUpdated: serverTimestamp()
+                });
+                toast('Product uploaded successfully!', false);
+                setTimeout(() => {
+                    window.location.href = 'file:///C:/Users/sunny/OneDrive/Desktop/my%20little/otp/index/index.html';
+                }, 2000);
+                productForm.reset();
+                imagePreview.innerHTML = '';
+                qrPreview.innerHTML = '';
+                imageUrl = '';
+                qrCodeUrl = '';
+                progressCircle.style.strokeDashoffset = 283;
+                progressText.textContent = '0%';
+                saveButton.disabled = true;
+            } catch (error) {
+                toast('Failed to upload product: ' + error.message);
+                console.error(error);
+            }
+        });
+
+        // Utility Functions
+        function showError(element, message) {
+            element.textContent = message;
+            element.style.display = 'block';
+            successMessage.style.display = 'none';
+            setTimeout(() => element.style.display = 'none', 5000);
+        }
+
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
+            setTimeout(() => successMessage.style.display = 'none', 5000);
+        }
+    </script>
+</body>
+</html>
